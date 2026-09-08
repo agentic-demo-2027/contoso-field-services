@@ -1,9 +1,9 @@
 // Shared shapes between the SPA and the customer API.
-// NOTE: mirrors the C# models - deliberately missing lastName (demo scenario 1).
 
 export interface Customer {
   id: number;
   firstName: string;
+  lastName: string;
   email: string;
   region: string;
   createdUtc: string;
@@ -11,6 +11,7 @@ export interface Customer {
 
 export interface CreateCustomerRequest {
   firstName: string;
+  lastName: string;
   email: string;
   region: string;
 }
