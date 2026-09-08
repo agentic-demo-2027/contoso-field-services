@@ -1,5 +1,4 @@
 // Field-level validation for inbound customer payloads.
-// NOTE: no input sanitisation here yet - demo scenario 1 adds it alongside the LastName field.
 using Contoso.Api.Models;
 
 namespace Contoso.Api.Validation;
@@ -14,6 +13,11 @@ public static class CustomerValidator
             errors.Add("First name is required.");
         else if (request.FirstName.Length > 50)
             errors.Add("First name must be 50 characters or fewer.");
+
+        if (string.IsNullOrWhiteSpace(request.LastName))
+            errors.Add("Last name is required.");
+        else if (request.LastName.Length > 50)
+            errors.Add("Last name must be 50 characters or fewer.");
 
         if (string.IsNullOrWhiteSpace(request.Email))
             errors.Add("Email is required.");

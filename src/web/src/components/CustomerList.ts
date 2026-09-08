@@ -20,7 +20,7 @@ export async function renderCustomerList(root: HTMLElement): Promise<void> {
             .map(
               (c) => `<tr>
                 <td>${c.id}</td>
-                <td>${c.firstName}</td>
+                <td>${c.firstName} ${c.lastName}</td>
                 <td>${c.email}</td>
                 <td>${c.region}</td>
               </tr>`

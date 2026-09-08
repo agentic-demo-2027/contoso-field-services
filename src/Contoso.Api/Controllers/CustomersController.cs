@@ -7,6 +7,7 @@ using Contoso.Api.Data;
 using Contoso.Api.Models;
 using Contoso.Api.Validation;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace Contoso.Api.Controllers;
 
@@ -31,10 +32,11 @@ public class CustomersController : ControllerBase
         {
             c.Id,
             c.FirstName,
+            c.LastName,
             c.Email,
             c.Region,
-            DisplayName = c.FirstName,
-            Created = c.CreatedUtc.ToString("yyyy-MM-dd")
+            DisplayName = $"{c.FirstName} {c.LastName}",
+            c.CreatedUtc
         });
 
         return Ok(result);
@@ -53,25 +55,39 @@ public class CustomersController : ControllerBase
     [HttpPost]
     public ActionResult<Customer> Create([FromBody] CreateCustomerRequest request)
     {
-        var errors = CustomerValidator.Validate(request);
+        var sanitizedRequest = new CreateCustomerRequest
+        {
+            FirstName = SanitizeName(request.FirstName),
+            LastName = SanitizeName(request.LastName),
+            Email = request.Email,
+            Region = request.Region
+        };
+
+        var errors = CustomerValidator.Validate(sanitizedRequest);
         if (errors.Count > 0)
             return BadRequest(new { errors });
 
         // Business rule enforced directly in the controller - another refactor seam.
-        if (_repository.EmailExists(request.Email))
+        if (_repository.EmailExists(sanitizedRequest.Email))
             return Conflict(new { message = "A customer with that email already exists." });
 
-        // Values are stored exactly as received - no sanitisation (scenario 1 addresses this).
         var customer = new Customer
         {
-            FirstName = request.FirstName,
-            Email = request.Email,
-            Region = request.Region
+            FirstName = sanitizedRequest.FirstName,
+            LastName = sanitizedRequest.LastName,
+            Email = sanitizedRequest.Email,
+            Region = sanitizedRequest.Region
         };
 
         var created = _repository.Add(customer);
         _logger.LogInformation("Created customer {CustomerId}", created.Id);
 
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+    }
+
+    private static string SanitizeName(string value)
+    {
+        var withoutMarkup = Regex.Replace(value, "<.*?>", string.Empty);
+        return new string(withoutMarkup.Where(c => !char.IsControl(c)).ToArray()).Trim();
     }
 }

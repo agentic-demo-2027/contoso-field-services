@@ -11,9 +11,14 @@ export function renderCustomerForm(root: HTMLElement, onCreated: () => void): vo
   root.innerHTML = `
     <form id="customer-form" novalidate>
       <h2>New customer</h2>
-      <label>First name
-        <input name="firstName" type="text" required maxlength="50" />
-      </label>
+      <div class="name-row">
+        <label>First name
+          <input name="firstName" type="text" required maxlength="50" />
+        </label>
+        <label>Last name
+          <input name="lastName" type="text" required maxlength="50" />
+        </label>
+      </div>
       <label>Email
         <input name="email" type="email" required />
       </label>
@@ -38,6 +43,7 @@ export function renderCustomerForm(root: HTMLElement, onCreated: () => void): vo
     const data = new FormData(form);
     const request: CreateCustomerRequest = {
       firstName: String(data.get('firstName') ?? ''),
+      lastName: String(data.get('lastName') ?? ''),
       email: String(data.get('email') ?? ''),
       region: String(data.get('region') ?? '')
     };
