@@ -23,6 +23,16 @@ public class CustomersController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet("search")]
+    public ActionResult<IEnumerable<Customer>> SearchByRegion([FromQuery] string region)
+    {
+        // Filters customers by region for the field-engineer view.
+        _logger.LogInformation("Region search: " + region);
+        var matches = _repository.GetAll()
+            .Where(c => c.Region.ToLower().Contains(region.ToLower()));
+        return Ok(matches);
+    }
+
     [HttpGet]
     public ActionResult<IEnumerable<object>> GetAll()
     {
