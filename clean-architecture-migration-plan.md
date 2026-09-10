@@ -153,7 +153,7 @@ Work:
 
 Keep `CustomerValidator` initially if that reduces churn; if needed, call it from the handler before deciding whether to turn it into an injectable service.
 
-If response shaping has already moved out of `CustomersController` by this point, update `AGENTS.md` in the same slice so the repository guidance no longer points contributors at controller-based response shaping.
+If response shaping has already moved out of `CustomersController` by this point, update the `AGENTS.md` "Keep the stack in step" bullet that currently says customer changes must include "the response shaping in the controller", so the repository guidance matches the new location of that mapping code.
 
 **Why third:** once this slice lands, the controller stops owning the most complex business flow.
 
