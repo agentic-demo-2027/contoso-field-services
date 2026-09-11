@@ -13,7 +13,7 @@ export async function renderCustomerList(root: HTMLElement): Promise<void> {
     root.innerHTML = `
       <table>
         <thead>
-          <tr><th>ID</th><th>Name</th><th>Email</th><th>Region</th></tr>
+          <tr><th>ID</th><th>Name</th><th>Email</th><th>Region</th><th>Notes</th></tr>
         </thead>
         <tbody>
           ${customers
@@ -23,6 +23,7 @@ export async function renderCustomerList(root: HTMLElement): Promise<void> {
                 <td>${c.firstName}</td>
                 <td>${c.email}</td>
                 <td>${c.region}</td>
+                <td>${(c as any).notes ?? ''}</td>
               </tr>`
             )
             .join('')}
