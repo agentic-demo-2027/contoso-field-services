@@ -13,6 +13,7 @@ export interface CreateCustomerRequest {
   firstName: string;
   email: string;
   region: string;
+  notes?: string;
 }
 
 export interface ValidationErrorResponse {
