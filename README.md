@@ -37,13 +37,35 @@ cd tests/Contoso.Api.Tests && dotnet test
 
 A customer currently has a first name, an email address and a region.
 
-## Agents
+## How Copilot is configured here
 
-`AGENTS.md` holds the working agreements every agent follows. Repository-level review
-agents live in `.github/agents/` and can be asked for by name in a pull request:
+Two different mechanisms, and the difference matters.
 
-| Agent | Reviews |
+### Automatic — applied to every pull request, nobody has to ask
+
+| File | Scope | Read by |
+|---|---|---|
+| `AGENTS.md` | whole repo | cloud agent, code review |
+| `.github/copilot-instructions.md` | whole repo | chat, cloud agent, code review |
+| `.github/instructions/csharp-api.instructions.md` | `src/Contoso.Api/**/*.cs` | cloud agent, code review |
+| `.github/instructions/frontend.instructions.md` | `src/web/**/*.ts` | cloud agent, code review |
+| `.github/instructions/tests.instructions.md` | `tests/**/*.cs` | cloud agent, code review |
+
+Path-specific files use `applyTo` frontmatter, so the C# rules are only considered when C#
+files change. A repository ruleset requests the review automatically on every pull request
+into `main`.
+
+### On demand — chosen by name when you want a specialist
+
+Custom agents live in `.github/agents/`. They are **not** triggered automatically: you pick
+one from the agent dropdown on GitHub, in an IDE, or in the CLI, and hand it a task.
+
+| Agent | Good for |
 |---|---|
-| `api-reviewer` | C# validation, sanitisation, layering |
-| `frontend-reviewer` | Type drift, injection risk, API contract match |
-| `docs-checker` | Documentation accuracy after a change |
+| `api-reviewer` | A focused audit of the C# API outside the normal review flow |
+| `frontend-reviewer` | A focused audit of the SPA |
+| `docs-checker` | Checking the docs still match after a change |
+
+The filename is the agent's identifier. Moving one of these files to `/agents/` in the
+organisation's `.github` repository would make it available across every repository in the
+organisation, without changing its contents.
